@@ -7,9 +7,8 @@
   <title>Neiborhood map Project</title>
 
   <link href=css/style.css rel=stylesheet>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <script src="js/jquery/jquery-3.2.1.js"></script>
 
   <!-- Latest compiled and minified CSS -->
@@ -29,20 +28,25 @@
   <div>
     <ul class="nav nav-pills nav-stacked">
       <li role="presentation" class="active"><a href="#">Yosef Map</a></li>
-      <input type="text" class="form-control" placeholder="Search for...">
-      <li role="presentation"><a href="#">MALL</a></li>
-      <li role="presentation"><a href="#">PARK</a></li>
-      <li role="presentation"><a href="#">RESTERENT</a></li>
-      <li role="presentation"><a href="#">RIVER</a></li>
-      <li role="presentation"><a href="#">LIBERARY</a></li>
-
+    <!--  <input type="text" class="form-control" placeholder="Search for...">
+      <li role="presentation"><a href="#mall">MALL</a></li>
+      <li role="presentation"><a href="#park">PARK</a></li>
+      <li role="presentation"><a href="#resterent">RESTERENT</a></li>
+      <li role="presentation"><a href="#river">RIVER</a></li>
+      <li role="presentation"><a href="#liberary">LIBERARY</a></li>
+-->
     </ul>
+    <div>
+              <input placeholder="Search…" type="search" data-bind="textInput: query" autocomplete="off">
+              <ul data-bind="foreach: filteredlocList">
+                  <li data-bind="text: title, click: $parent.setLoc"></li>
+              </ul>
+          </div>
   </div>
-  <div>
+  <div >
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/map.js"></script>
-
-    <input id="show-listings" type="button" value="Show Listings">
-    <input id="hide-listings" type="button" value="Hide Listings">
+    <script type="text/javascript" src="js/knockout/knockout-3.3.0.js"></script>
 
   </div>
   <div id="map">
