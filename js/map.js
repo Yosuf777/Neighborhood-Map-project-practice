@@ -1,82 +1,169 @@
 var map;
 
-var markers = [];
-var locations = [
-          { title: 'MALL', location: {  lat: 24.748644, lng: 46.536133 } },
-          { title: 'PARK', location: {  lat: 24.751547,  lng: 46.534889 } },
-          { title: 'RESTERENT', location: { lat: 24.750339,lng: 46.538258 } },
-          { title: 'RIVER', location: { lat: 24.747981,lng: 46.544502} },
-          { title: 'LIBERARY', location: { lat: 24.754704,lng: 46.546347 } }
-];
-
 function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
+  // 1- map object
+  var map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 14,
+    center: {
+      lat: 24.751365,
+      lng: 46.535520
+    },
 
-        center: {  lat: 24.751365,lng: 46.535520 },
-        zoom: 14
-    });
-    for (var i = 0; i < locations.length; i++) {
-        // Get the position from the location array.
-        var position = locations[i].location;
-        var title = locations[i].title;
-        // Create a marker per location, and put into markers array.
-        var marker = new google.maps.Marker({
-            position: position,
-            title: title,
-            map: map,
-            animation: google.maps.Animation.DROP,
-            id: i
-        });
-        markers.push(marker);
-    };
-
-    var Loc = function (data) {
-        this.title = ko.observable(data.title);
-        this.location = ko.observable(data.location);
-    };
-
-    var place = function (data) {
-        this.name = ko.observable(data.name);
-    };
-
-    var stringStartsWith = function (string, startsWith) {
-        string = string || "";
-        if (startsWith.length > string.length)
-            return false;
-        return string.substring(0, startsWith.length) === startsWith;
-    };
-
-    var ViewModel = function () {
-        var self = this;
-        this.query = ko.observable('');
-        this.locList = ko.observableArray('');
-        this.filteredlocList = ko.computed(function () {
-            var filter = self.query().toLowerCase();
-            console.log(filter);
-            var unwrappedLocList = ko.toJS(self.locList);
-            if (!filter) {
-                return unwrappedLocList
-            } else {
-                return ko.utils.arrayFilter(unwrappedLocList, function (item) {
-                    return stringStartsWith(item.title.toLowerCase(), filter);
-                });
-            }
-        }, this);
-
-            this.setLoc = function (clickedLoc) {
-                var unwrappedLoc = ko.toJS(clickedLoc);
-                var unwrappedLocList = ko.toJS(self.locList);
-                for (var i = 0; i < unwrappedLocList.length; i++) {
-                    if (unwrappedLoc.title == markers[i].title) {
-                        markers[i].setAnimation(google.maps.Animation.BOUNCE);
-                    }
-                }
-            };
-
-    };
+  });
+  // 2- knockout
+  $(document).ready(function() {
     var vm = new ViewModel();
     ko.applyBindings(vm);
-   locations.forEach(function (locItem) {
-        vm.locList.push(new Loc(locItem))
-    });
+  });
+
+  //3-Place Data
+var Places = function(data){
+var self = this;
+self.title = ko.observable(data.title);
+self.lat = ko.observable(data.lat);
+self.lng = ko.observable(data.lng);
+self.marker=ko.observable();
 };
+//Favorite Location Data as array of object
+var Locations=[{
+title: 'Riyadh City',
+  lat: 24.713552,
+  lng: 46.675296
+},{
+title: 'Garawi Center',
+  lat: 24.712120,
+  lng: 46.670973
+},{
+title: 'FourSeasons Hotel',
+  lat: 24.711379,
+  lng: 46.674385
+},{
+title: 'Kingdom Tower',
+  lat: 24.712061,
+  lng: 46.675951
+},{
+title: 'Olaya Center',
+  lat: 24.713933,
+  lng: 46.672261
+},{
+title: 'Night Coffee',
+  lat: 24.713124,
+  lng: 46.673033
+},{
+title: 'Fransch Bank',
+  lat: 24.714030,
+  lng: 46.675383
+}
+]
+
+var ViewModel=function(){
+
+var location;
+var marker;
+var input;
+var venue;
+var self = this;
+var Infowindow = new google.map.Infowindow({maxwidth:200});
+}
+var bounds = new google.maps.LatLngBounds();
+
+self.PlacesData=ko.observableArray([]);
+locations.forEech(function(PlacesData)){
+ self.PlacesData.push(new Places(PlacesData));
+});
+
+
+self.Places().forEech(function(PlacesData)){
+
+
+  marker = new google.map.Marker({
+    position: new google.maps.LatLng(PlacesData.lat(),PlacesData.lng()),
+    map: map,
+  });
+  bounds.extend(marker.position);
+  PlacesData.marker = marker ;
+}
+  /*fav = new Array();
+  fav = [{
+      lat: 24.748644,
+      lng: 46.536133
+    },
+    {
+      lat: 24.751547,
+      lng: 46.534889
+    },
+    {
+      lat: 24.750339,
+      lng: 46.538258
+    },
+    {
+      lat: 24.747981,
+      lng: 46.544502
+    },
+    {
+      lat: 24.754704,
+      lng: 46.546347
+    },
+    {
+      lat: 24.748644,
+      lng: 46.536133
+    }
+  ];
+  for (var i = 1; i < fav.length; i++)
+    marker = new google.maps.Marker({
+      position: fav[i],
+      map: map,
+      title: name
+    })
+}
+
+function ViewModel(locations) {
+  var self = this;
+
+  self.name = name;
+
+  self.filterText = ko.observable(""); // Text from search field
+
+
+  // locations data
+  this.locations = ko.observableArray([{
+      name: "park",
+      lat: 24.748644,
+      lng: 46.536133
+    },
+    {
+      name: "Resturan",
+      lat: 24.751547,
+      lng: 46.534889
+    },
+    {
+      name: "River",
+      lat: 24.750339,
+      lng: 46.538258
+    },
+    {
+      name: "Library",
+      lat: 24.747981,
+      lng: 46.544502
+    },
+    {
+      name: "mall",
+      lat: 24.748644,
+      lng: 46.536133
+    }
+  ]);
+  self.filteredlocations = ko.computed(function() {
+
+    fText = self.filterText().replace(/\s+/g, ' ');
+
+    var filteredlocations = ko.utils.arrayFilter(self.locations(), function(test) {
+      if (fText.length)
+        return (test.name.toUpperCase().indexOf(fText.toUpperCase()) >= 0);
+      else
+        return 1;
+    });
+
+    return filteredlocations;
+  }, self);
+
+}*/
